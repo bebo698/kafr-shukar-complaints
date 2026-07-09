@@ -33,7 +33,7 @@ export default function ComplaintForm() {
 
     try {
       // الرابط الجديد الخاص بك
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwI4wZq1HQ9AQU-U3L845vuCIIHydi2PUYWLG2cdTPa5E-UEgj8uIbzEiwBhYI6GiGu/exec'; 
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJXkbz4O-hxlyb-1dWUD7q1ZSIGpBaNiVU_2tcTX2sYuvNo3h5haHvwR9RsNR0QLgF/exec'; 
       
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
