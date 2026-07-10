@@ -7,7 +7,6 @@ export default function ComplaintForm() {
   const [sent, setSent] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // حماية من خطأ الـ Hydration لضمان توافق السيرفر مع المتصفح
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -19,32 +18,33 @@ export default function ComplaintForm() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const data = {
-      name: formData.get('name'),
-      nationalId: formData.get('nationalId'),
-      phone: formData.get('phone'),
-      address: formData.get('address'),
-      type: formData.get('requestType'),
-      dept: formData.get('dept'),
-      subject: formData.get('subject'),
-      description: formData.get('description'),
-      date: formData.get('date'),
-    };
+    
+    // تحويل البيانات لـ URLSearchParams لضمان قراءتها بواسطة السكريبت الجديد
+    const params = new URLSearchParams();
+    params.append('name', formData.get('name') as string);
+    params.append('nationalId', formData.get('nationalId') as string);
+    params.append('phone', formData.get('phone') as string);
+    params.append('address', formData.get('address') as string);
+    params.append('type', formData.get('requestType') as string);
+    params.append('dept', formData.get('dept') as string);
+    params.append('subject', formData.get('subject') as string);
+    params.append('description', formData.get('description') as string);
+    params.append('date', formData.get('date') as string);
 
     try {
-      // رابط جوجل شيت الجديد الخاص بك
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJXkbz4O-hxlyb-1dWUD7q1ZSIGpBaNiVU_2tcTX2sYuvNo3h5haHvwR9RsNR0QLgF/exec'; 
+      // الرابط الجديد الخاص بك
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8Y5sS3HCdCxCisolbjrpq8AtVbRwSAht0nGK4NAXu9X2iSaTIqvlxWsK74aaNYLN9/exec'; 
       
-      // إرسال البيانات (استخدام text/plain يضمن تخطي مشاكل الـ CORS مع جوجل)
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors', 
+        mode: 'no-cors', // لتجنب مشاكل CORS مع جوجل
         headers: {
-          'Content-Type': 'text/plain;charset=utf-8',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(data),
+        body: params.toString(),
       });
 
+      // ملاحظة: مع no-cors لا ننتظر رد من السيرفر، إذا لم يحدث Error نعتبره نجح
       setSent(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
@@ -72,19 +72,14 @@ export default function ComplaintForm() {
 
   return (
     <div className="min-h-screen bg-[#f4f7f9] font-sans pb-20 text-right" dir="rtl">
-      
-      {/* 1. الهيدر الرسمي - توزيع الشعارات يمين وشمال */}
+      {/* الهيدر */}
       <header className="bg-[#003366] border-b-4 border-yellow-500 shadow-2xl relative pt-8 pb-16 px-6 overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         <div className="max-w-6xl mx-auto flex flex-row justify-between items-center relative z-10">
-          
-          {/* شعار اليمين - images.png */}
           <div className="flex flex-col items-center gap-2">
             <img src="/images.png" alt="شعار المحافظة" className="w-20 h-20 md:w-28 md:h-28 object-contain drop-shadow-xl" />
             <span className="text-white text-[10px] md:text-sm font-bold">محافظة القليوبية</span>
           </div>
-          
-          {/* العنوان المركزي */}
           <div className="text-center flex-1 px-4">
             <h1 className="text-white text-2xl md:text-5xl font-black mb-2 tracking-tight leading-tight">مجلس مدينة كفر شكر</h1>
             <p className="text-yellow-400 text-sm md:text-2xl font-bold italic tracking-wide">منظومة الشكاوى والمقترحات الإلكترونية</p>
@@ -92,8 +87,6 @@ export default function ComplaintForm() {
               نحو خدمة أفضل... واستجابة أسرع
             </div>
           </div>
-
-          {/* شعار الشمال - 11.png */}
           <div className="flex flex-col items-center gap-2 text-center">
             <img src="/11.png" alt="شعار رئاسة المركز" className="w-20 h-20 md:w-28 md:h-28 object-contain drop-shadow-xl" />
             <span className="text-white text-[10px] md:text-sm font-bold leading-tight">رئاسة مركز ومدينة<br/>كفر شكر</span>
@@ -101,12 +94,10 @@ export default function ComplaintForm() {
         </div>
       </header>
 
-      {/* 2. الصندوق الأبيض الرئيسي - يضم السايد بار اليمنى */}
       <main className="max-w-6xl mx-auto px-4 -mt-10 relative z-20">
         <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100">
+          {/* محتوى الصفحة */}
           <div className="flex flex-col md:flex-row">
-            
-            {/* السايد بار اليمنى (أيقونات المعلومات) */}
             <div className="md:w-72 bg-slate-50 p-8 flex flex-col gap-10 border-l border-gray-100 items-start">
               <div className="flex items-center gap-4 group">
                 <div className="p-3 bg-white rounded-2xl shadow-sm text-blue-700 group-hover:bg-[#003366] group-hover:text-white transition-all"><Lock size={24}/></div>
@@ -122,7 +113,6 @@ export default function ComplaintForm() {
               </div>
             </div>
 
-            {/* محتوى الترحيب */}
             <div className="flex-1 p-8 md:p-14">
               <h3 className="text-4xl font-black text-[#003366] mb-6 underline decoration-yellow-500 decoration-8 underline-offset-[12px]">عزيزنا المواطن،</h3>
               <p className="text-gray-600 text-xl leading-relaxed font-medium">
@@ -136,10 +126,8 @@ export default function ComplaintForm() {
             </div>
           </div>
 
-          {/* نموذج البيانات */}
           <form onSubmit={handleSubmit} className="p-8 md:p-14 pt-4 space-y-16">
-            
-            {/* القسم الأول: بيانات مقدم الطلب */}
+            {/* القسم الأول */}
             <section className="space-y-8">
               <div className="flex justify-start">
                 <div className="bg-[#003366] text-white px-10 py-3 rounded-l-full flex items-center gap-4 shadow-lg min-w-[350px]">
@@ -147,7 +135,6 @@ export default function ComplaintForm() {
                   <span className="text-2xl font-bold uppercase tracking-wider">القسم الأول: بيانات مقدم الطلب</span>
                 </div>
               </div>
-              
               <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div className="space-y-3">
                   <label className="block text-sm font-black text-gray-700 pr-2">1. الاسم رباعي *</label>
@@ -168,7 +155,7 @@ export default function ComplaintForm() {
               </div>
             </section>
 
-            {/* القسم الثاني: بيانات الشكوى */}
+            {/* القسم الثاني */}
             <section className="space-y-8">
               <div className="flex justify-start">
                 <div className="bg-[#003366] text-white px-10 py-3 rounded-l-full flex items-center gap-4 shadow-lg min-w-[350px]">
@@ -176,7 +163,6 @@ export default function ComplaintForm() {
                   <span className="text-2xl font-bold uppercase tracking-wider">القسم الثاني: بيانات الشكوى</span>
                 </div>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div className="space-y-3">
                   <label className="block text-sm font-black text-gray-700 pr-2">5. نوع الطلب المقدم *</label>
@@ -188,7 +174,6 @@ export default function ComplaintForm() {
                     ))}
                   </div>
                 </div>
-
                 <div className="space-y-3">
                   <label className="block text-sm font-black text-gray-700 pr-2">6. الإدارة المختصة *</label>
                   <select name="dept" required className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none font-bold shadow-inner text-right appearance-none">
@@ -199,17 +184,14 @@ export default function ComplaintForm() {
                     <option>الإدارة الهندسية</option>
                   </select>
                 </div>
-
                 <div className="space-y-3">
                   <label className="block text-sm font-black text-gray-700 pr-2">7. عنوان الموضوع *</label>
                   <input name="subject" required className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none font-bold shadow-inner text-right" placeholder="ملخص سريع لمحتوى الشكوى" />
                 </div>
-
                 <div className="md:col-span-3 space-y-3">
                   <label className="block text-sm font-black text-gray-700 pr-2">8. وصف الشكوى بالتفصيل *</label>
                   <textarea name="description" rows={6} required className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none font-bold shadow-inner text-right resize-none" placeholder="يرجى كتابة كافة التفاصيل لمساعدتنا في سرعة الحل..."></textarea>
                 </div>
-
                 <div className="space-y-3">
                   <label className="block text-sm font-black text-gray-700 pr-2">9. تاريخ الواقعة</label>
                   <input name="date" type="date" className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none font-bold shadow-inner text-right" />
@@ -217,7 +199,6 @@ export default function ComplaintForm() {
               </div>
             </section>
 
-            {/* القسم الثالث: الإقرار */}
             <section className="bg-yellow-50 p-10 rounded-[2.5rem] border-2 border-yellow-200 shadow-inner">
                <label className="flex items-start gap-6 cursor-pointer">
                   <input type="checkbox" required className="mt-1 w-8 h-8 rounded border-gray-300 text-blue-600 focus:ring-0" />
@@ -227,7 +208,6 @@ export default function ComplaintForm() {
                </label>
             </section>
 
-            {/* زر الإرسال */}
             <div className="flex flex-col items-center gap-6 pt-10">
               <button 
                 type="submit" 
@@ -245,7 +225,6 @@ export default function ComplaintForm() {
           </form>
         </div>
 
-        {/* كود QR والجملة الختامية */}
         <div className="mt-20 flex flex-col items-center gap-8 pb-20 text-center">
            <div className="bg-white p-6 rounded-[2.5rem] shadow-2xl border border-gray-100 flex flex-col items-center group transition-all hover:border-blue-200">
               <QrCode size={110} className="text-[#003366] mb-3" />
