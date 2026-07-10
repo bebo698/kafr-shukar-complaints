@@ -1,16 +1,13 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Send, FileText, User, CheckCircle, Mail, Lock, Headphones, ShieldCheck, QrCode } from 'lucide-react';
+import { Send, FileText, User, CheckCircle, Mail, Lock, ShieldCheck, QrCode, Camera, Upload } from 'lucide-react';
 
 export default function ComplaintForm() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+  useEffect(() => { setMounted(true); }, []);
   if (!mounted) return null;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -18,38 +15,54 @@ export default function ComplaintForm() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    
-    // تحويل البيانات لـ URLSearchParams لضمان قراءتها بواسطة السكريبت الجديد
     const params = new URLSearchParams();
-    params.append('name', formData.get('name') as string);
-    params.append('nationalId', formData.get('nationalId') as string);
-    params.append('phone', formData.get('phone') as string);
-    params.append('address', formData.get('address') as string);
-    params.append('type', formData.get('requestType') as string);
-    params.append('dept', formData.get('dept') as string);
-    params.append('subject', formData.get('subject') as string);
-    params.append('description', formData.get('description') as string);
-    params.append('date', formData.get('date') as string);
+
+    // دالة تحويل الصورة لـ Base64 لكي يقبلها جوجل سكريبت
+    const toBase64 = (file: File) => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result?.toString().split(',')[1]);
+      reader.onerror = error => reject(error);
+    });
 
     try {
-      // الرابط الجديد الخاص بك
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8Y5sS3HCdCxCisolbjrpq8AtVbRwSAht0nGK4NAXu9X2iSaTIqvlxWsK74aaNYLN9/exec'; 
+      // 1. إضافة البيانات النصية
+      params.append('name', formData.get('name') as string);
+      params.append('nationalId', formData.get('nationalId') as string);
+      params.append('phone', formData.get('phone') as string);
+      params.append('address', formData.get('address') as string);
+      params.append('requestType', formData.get('requestType') as string);
+      params.append('dept', formData.get('dept') as string);
+      params.append('subject', formData.get('subject') as string);
+      params.append('description', formData.get('description') as string);
+      params.append('date', formData.get('date') as string);
+
+      // 2. معالجة صور المرفقات
+      const idFile = formData.get('idPhoto') as File;
+      const compFile = formData.get('complaintPhoto') as File;
+      
+      if (idFile && idFile.size > 0) {
+        const b64 = await toBase64(idFile);
+        params.append('idPhoto', b64 as string);
+      }
+      if (compFile && compFile.size > 0) {
+        const b64 = await toBase64(compFile);
+        params.append('complaintPhoto', b64 as string);
+      }
+
+      const GOOGLE_SCRIPT_URL = 'ضع_رابط_الـ_DEPLOY_الجديد_هنا'; 
       
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors', // لتجنب مشاكل CORS مع جوجل
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: params.toString(),
       });
 
-      // ملاحظة: مع no-cors لا ننتظر رد من السيرفر، إذا لم يحدث Error نعتبره نجح
       setSent(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
-      console.error(error);
-      alert("عذراً، حدث خطأ أثناء الإرسال. يرجى التأكد من اتصال الإنترنت والمحاولة مرة أخرى.");
+      alert("عذراً، حدث خطأ أثناء الإرسال. تأكد من حجم الصور وحاول مرة أخرى.");
     } finally {
       setLoading(false);
     }
@@ -59,183 +72,126 @@ export default function ComplaintForm() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4" dir="rtl">
         <div className="bg-white p-12 rounded-[2rem] shadow-2xl text-center border-t-8 border-[#003366] max-w-md w-full">
-          <div className="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-16 h-16 text-green-600" />
-          </div>
-          <h1 className="text-3xl font-black text-[#003366] mb-4">تم الاستلام بنجاح</h1>
-          <p className="text-gray-600 font-bold text-lg leading-relaxed mb-8">نشكركم على ثقتكم.. تم تسجيل شكواكم في منظومة مجلس مدينة كفر شكر بنجاح. سيتم مراجعة الطلب وإفادتكم بالرد عبر الواتساب فوراً.</p>
-          <button onClick={() => setSent(false)} className="w-full bg-[#003366] text-white font-black py-4 rounded-2xl shadow-xl hover:bg-blue-900 transition-all transform active:scale-95">إرسال طلب جديد</button>
+          <CheckCircle className="w-20 h-20 text-green-600 mx-auto mb-6" />
+          <h1 className="text-3xl font-black text-[#003366] mb-4">تم تسجيل الشكوى</h1>
+          <p className="text-gray-600 font-bold mb-8">ستصلك رسالة تأكيد الآن على الواتساب. شكراً لتواصلك معنا.</p>
+          <button onClick={() => setSent(false)} className="w-full bg-[#003366] text-white py-4 rounded-2xl font-black">تقديم طلب جديد</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f7f9] font-sans pb-20 text-right" dir="rtl">
-      {/* الهيدر */}
-      <header className="bg-[#003366] border-b-4 border-yellow-500 shadow-2xl relative pt-8 pb-16 px-6 overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-        <div className="max-w-6xl mx-auto flex flex-row justify-between items-center relative z-10">
-          <div className="flex flex-col items-center gap-2">
-            <img src="/images.png" alt="شعار المحافظة" className="w-20 h-20 md:w-28 md:h-28 object-contain drop-shadow-xl" />
-            <span className="text-white text-[10px] md:text-sm font-bold">محافظة القليوبية</span>
-          </div>
-          <div className="text-center flex-1 px-4">
-            <h1 className="text-white text-2xl md:text-5xl font-black mb-2 tracking-tight leading-tight">مجلس مدينة كفر شكر</h1>
-            <p className="text-yellow-400 text-sm md:text-2xl font-bold italic tracking-wide">منظومة الشكاوى والمقترحات الإلكترونية</p>
-            <div className="mt-6 inline-block bg-[#004080] text-white px-6 md:px-10 py-2 rounded-full border border-blue-400/50 shadow-inner italic text-xs md:text-lg font-bold">
-              نحو خدمة أفضل... واستجابة أسرع
-            </div>
-          </div>
-          <div className="flex flex-col items-center gap-2 text-center">
-            <img src="/11.png" alt="شعار رئاسة المركز" className="w-20 h-20 md:w-28 md:h-28 object-contain drop-shadow-xl" />
-            <span className="text-white text-[10px] md:text-sm font-bold leading-tight">رئاسة مركز ومدينة<br/>كفر شكر</span>
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#f4f7f9] text-right pb-20" dir="rtl">
+      <header className="bg-[#003366] pt-12 pb-20 px-6 text-center border-b-4 border-yellow-500 shadow-xl">
+        <h1 className="text-white text-3xl md:text-5xl font-black mb-4">منظومة شكاوى مجلس مدينة كفر شكر</h1>
+        <div className="bg-yellow-400 text-[#003366] inline-block px-8 py-2 rounded-full font-black italic">نحن هنا لخدمتكم</div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 -mt-10 relative z-20">
-        <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100">
-          {/* محتوى الصفحة */}
-          <div className="flex flex-col md:flex-row">
-            <div className="md:w-72 bg-slate-50 p-8 flex flex-col gap-10 border-l border-gray-100 items-start">
-              <div className="flex items-center gap-4 group">
-                <div className="p-3 bg-white rounded-2xl shadow-sm text-blue-700 group-hover:bg-[#003366] group-hover:text-white transition-all"><Lock size={24}/></div>
-                <span className="text-sm font-black text-gray-500">سرية تامة للبيانات</span>
-              </div>
-              <div className="flex items-center gap-4 group border-t border-gray-200 pt-8 w-full">
-                <div className="p-3 bg-white rounded-2xl shadow-sm text-blue-700 group-hover:bg-[#003366] group-hover:text-white transition-all"><Mail size={24}/></div>
-                <span className="text-sm font-black text-gray-500">إخطاركم برقم الشكوى</span>
-              </div>
-              <div className="flex items-center gap-4 group border-t border-gray-200 pt-8 w-full">
-                <div className="p-3 bg-white rounded-2xl shadow-sm text-blue-700 group-hover:bg-[#003366] group-hover:text-white transition-all"><ShieldCheck size={24}/></div>
-                <span className="text-sm font-black text-gray-500">الرد من الإدارة المختصة</span>
-              </div>
-            </div>
+      <main className="max-w-6xl mx-auto px-4 -mt-12">
+        <form onSubmit={handleSubmit} className="bg-white rounded-[3rem] shadow-2xl p-8 md:p-16 space-y-16 border border-gray-100">
+          
+          {/* قسم البيانات الشخصية */}
+          <section className="space-y-10">
+             <div className="flex items-center gap-4 border-r-8 border-[#003366] pr-4">
+                <User size={32} className="text-[#003366]" />
+                <h2 className="text-3xl font-black text-[#003366]">أولاً: بيانات مقدم الطلب</h2>
+             </div>
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="space-y-2">
+                   <label className="font-bold text-gray-700 block pr-2">الاسم رباعي *</label>
+                   <input name="name" required className="w-full p-5 bg-slate-50 border rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="كما هو في البطاقة" />
+                </div>
+                <div className="space-y-2">
+                   <label className="font-bold text-gray-700 block pr-2">الرقم القومي (14 رقم) *</label>
+                   <input name="nationalId" maxLength={14} required className="w-full p-5 bg-slate-50 border rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
+                <div className="space-y-2">
+                   <label className="font-bold text-gray-700 block pr-2">رقم الهاتف (واتساب) *</label>
+                   <input name="phone" required className="w-full p-5 bg-slate-50 border rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="01xxxxxxxxx" />
+                </div>
+             </div>
+             <input name="address" required placeholder="العنوان بالتفصيل (القرية - الشارع - رقم المنزل) *" className="w-full p-5 bg-slate-50 border rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none" />
+          </section>
 
-            <div className="flex-1 p-8 md:p-14">
-              <h3 className="text-4xl font-black text-[#003366] mb-6 underline decoration-yellow-500 decoration-8 underline-offset-[12px]">عزيزنا المواطن،</h3>
-              <p className="text-gray-600 text-xl leading-relaxed font-medium">
-                يرحب مجلس مدينة كفر شكر باستقبال شكاواكم ومقترحاتكم بهدف تحسين جودة الخدمات المقدمة. 
-                نؤكد لكم أن جميع البيانات يتم التعامل معها بسرية تامة، وسيتم الرد على سيادتكم في أقرب وقت ممكن.
-              </p>
-              <div className="mt-10 flex items-center gap-2 text-red-600 font-black text-sm p-3 bg-red-50 rounded-lg border border-red-100 w-fit">
-                <span className="w-2 h-2 bg-red-600 rounded-full animate-ping"></span>
-                الحقول التي تحمل علامة (*) إلزامية.
-              </div>
-            </div>
-          </div>
+          {/* قسم الشكوى */}
+          <section className="space-y-10">
+             <div className="flex items-center gap-4 border-r-8 border-[#003366] pr-4">
+                <FileText size={32} className="text-[#003366]" />
+                <h2 className="text-3xl font-black text-[#003366]">ثانياً: تفاصيل الطلب</h2>
+             </div>
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="space-y-2">
+                   <label className="font-bold text-gray-700 block pr-2">نوع الطلب *</label>
+                   <select name="requestType" className="w-full p-5 bg-slate-50 border rounded-2xl font-bold">
+                      <option>شكوى</option><option>مقترح</option><option>استفسار</option>
+                   </select>
+                </div>
+                <div className="space-y-2">
+                   <label className="font-bold text-gray-700 block pr-2">الإدارة المعنية *</label>
+                   <select name="dept" required className="w-full p-5 bg-slate-50 border rounded-2xl font-bold">
+                      <option value="">اختر الإدارة</option>
+                      <option>إدارة النظافة والبيئة</option>
+                      <option>إدارة الإشغالات</option>
+                      <option>إدارة الطرق والكباري</option>
+                      <option>الإدارة الهندسية</option>
+                   </select>
+                </div>
+                <div className="space-y-2">
+                   <label className="font-bold text-gray-700 block pr-2">عنوان الموضوع *</label>
+                   <input name="subject" required className="w-full p-5 bg-slate-50 border rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
+             </div>
+             <textarea name="description" rows={6} required placeholder="يرجى كتابة تفاصيل الشكوى بوضوح لمساعدتنا في سرعة الحل..." className="w-full p-5 bg-slate-50 border rounded-2xl resize-none outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+             <div className="w-full md:w-1/3 space-y-2">
+                <label className="font-bold text-gray-700 block pr-2">تاريخ الواقعة</label>
+                <input name="date" type="date" className="w-full p-5 bg-slate-50 border rounded-2xl" />
+             </div>
+          </section>
 
-          <form onSubmit={handleSubmit} className="p-8 md:p-14 pt-4 space-y-16">
-            {/* القسم الأول */}
-            <section className="space-y-8">
-              <div className="flex justify-start">
-                <div className="bg-[#003366] text-white px-10 py-3 rounded-l-full flex items-center gap-4 shadow-lg min-w-[350px]">
-                  <User size={28}/>
-                  <span className="text-2xl font-bold uppercase tracking-wider">القسم الأول: بيانات مقدم الطلب</span>
+          {/* قسم المرفقات - الجديد */}
+          <section className="space-y-10 bg-blue-50/50 p-8 md:p-12 rounded-[2.5rem] border-2 border-dashed border-blue-200">
+             <div className="flex items-center gap-4 text-[#003366]">
+                <Camera size={32} />
+                <h2 className="text-3xl font-black">ثالثاً: المرفقات (صور)</h2>
+             </div>
+             <p className="text-blue-700 font-bold text-sm bg-white p-3 rounded-xl border border-blue-100 w-fit">يرجى رفع صور واضحة لضمان سرعة فحص الطلب.</p>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-4">
+                   <label className="font-black text-gray-600 block pr-2">1. صورة البطاقة الشخصية (وجه) *</label>
+                   <div className="relative group">
+                      <input type="file" name="idPhoto" accept="image/*" required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                      <div className="p-10 bg-white border-2 border-dashed border-gray-300 rounded-3xl flex flex-col items-center justify-center gap-4 group-hover:border-[#003366] transition-all">
+                         <Upload size={40} className="text-gray-400 group-hover:text-[#003366]" />
+                         <span className="font-bold text-gray-500">اضغط لرفع الصورة</span>
+                      </div>
+                   </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div className="space-y-3">
-                  <label className="block text-sm font-black text-gray-700 pr-2">1. الاسم رباعي *</label>
-                  <input name="name" required className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none transition-all font-bold shadow-inner text-right" placeholder="اكتب اسمك رباعي كما في البطاقة" />
+                <div className="space-y-4">
+                   <label className="font-black text-gray-600 block pr-2">2. صورة مستند الشكوى (اختياري)</label>
+                   <div className="relative group">
+                      <input type="file" name="complaintPhoto" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                      <div className="p-10 bg-white border-2 border-dashed border-gray-300 rounded-3xl flex flex-col items-center justify-center gap-4 group-hover:border-[#003366] transition-all">
+                         <Upload size={40} className="text-gray-400 group-hover:text-[#003366]" />
+                         <span className="font-bold text-gray-500">اضغط لرفع الصورة</span>
+                      </div>
+                   </div>
                 </div>
-                <div className="space-y-3">
-                  <label className="block text-sm font-black text-gray-700 pr-2">2. الرقم القومي *</label>
-                  <input name="nationalId" maxLength={14} required className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none font-bold shadow-inner text-right" placeholder="14 رقم" />
-                </div>
-                <div className="space-y-3">
-                  <label className="block text-sm font-black text-gray-700 pr-2">3. رقم الهاتف (واتساب) *</label>
-                  <input name="phone" required className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none font-bold shadow-inner text-right" placeholder="01012345678" />
-                </div>
-                <div className="md:col-span-3 space-y-3">
-                  <label className="block text-sm font-black text-gray-700 pr-2">4. العنوان بالتفصيل *</label>
-                  <input name="address" required className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none font-bold shadow-inner text-right" placeholder="القرية / المدينة - الشارع - رقم المنزل" />
-                </div>
-              </div>
-            </section>
+             </div>
+          </section>
 
-            {/* القسم الثاني */}
-            <section className="space-y-8">
-              <div className="flex justify-start">
-                <div className="bg-[#003366] text-white px-10 py-3 rounded-l-full flex items-center gap-4 shadow-lg min-w-[350px]">
-                  <FileText size={28}/>
-                  <span className="text-2xl font-bold uppercase tracking-wider">القسم الثاني: بيانات الشكوى</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div className="space-y-3">
-                  <label className="block text-sm font-black text-gray-700 pr-2">5. نوع الطلب المقدم *</label>
-                  <div className="flex gap-10 p-5 bg-gray-50 rounded-2xl shadow-inner border border-gray-100">
-                    {['شكوى', 'مقترح', 'استفسار'].map((t) => (
-                      <label key={t} className="flex items-center gap-3 cursor-pointer font-black text-[#003366]">
-                        <input type="radio" name="requestType" value={t} defaultChecked={t==='شكوى'} className="w-6 h-6 text-blue-600 focus:ring-0" /> {t}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <label className="block text-sm font-black text-gray-700 pr-2">6. الإدارة المختصة *</label>
-                  <select name="dept" required className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none font-bold shadow-inner text-right appearance-none">
-                    <option value="">اختر الإدارة المعنية</option>
-                    <option>إدارة النظافة والبيئة</option>
-                    <option>إدارة الإشغالات</option>
-                    <option>إدارة الطرق والكباري</option>
-                    <option>الإدارة الهندسية</option>
-                  </select>
-                </div>
-                <div className="space-y-3">
-                  <label className="block text-sm font-black text-gray-700 pr-2">7. عنوان الموضوع *</label>
-                  <input name="subject" required className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none font-bold shadow-inner text-right" placeholder="ملخص سريع لمحتوى الشكوى" />
-                </div>
-                <div className="md:col-span-3 space-y-3">
-                  <label className="block text-sm font-black text-gray-700 pr-2">8. وصف الشكوى بالتفصيل *</label>
-                  <textarea name="description" rows={6} required className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none font-bold shadow-inner text-right resize-none" placeholder="يرجى كتابة كافة التفاصيل لمساعدتنا في سرعة الحل..."></textarea>
-                </div>
-                <div className="space-y-3">
-                  <label className="block text-sm font-black text-gray-700 pr-2">9. تاريخ الواقعة</label>
-                  <input name="date" type="date" className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none font-bold shadow-inner text-right" />
-                </div>
-              </div>
-            </section>
-
-            <section className="bg-yellow-50 p-10 rounded-[2.5rem] border-2 border-yellow-200 shadow-inner">
-               <label className="flex items-start gap-6 cursor-pointer">
-                  <input type="checkbox" required className="mt-1 w-8 h-8 rounded border-gray-300 text-blue-600 focus:ring-0" />
-                  <span className="text-[#003366] font-black text-xl leading-relaxed md:text-2xl underline decoration-yellow-500 decoration-8 underline-offset-[14px]">
-                    أقر بأن كافة البيانات الواردة صحيحة، وأوافق على استخدامها في إجراءات فحص الشكوى والرد عليها من قبل الجهات المختصة. *
-                  </span>
-               </label>
-            </section>
-
-            <div className="flex flex-col items-center gap-6 pt-10">
-              <button 
-                type="submit" 
-                disabled={loading}
-                className="w-full md:w-[500px] bg-[#003366] hover:bg-blue-900 text-white font-black py-6 rounded-full shadow-[0_20px_50px_rgba(0,51,102,0.3)] transition-all transform hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-6 text-3xl disabled:bg-gray-400 disabled:scale-100"
-              >
-                {loading ? "جاري المعالجة..." : (
-                  <>
-                    <Send size={32} className="rotate-[-45deg]"/> إرسال الشكوى الآن
-                  </>
-                )}
-              </button>
-              <p className="text-gray-400 font-bold text-sm tracking-widest uppercase">نظام آمن ومشفر بالكامل 🔒</p>
-            </div>
-          </form>
-        </div>
-
-        <div className="mt-20 flex flex-col items-center gap-8 pb-20 text-center">
-           <div className="bg-white p-6 rounded-[2.5rem] shadow-2xl border border-gray-100 flex flex-col items-center group transition-all hover:border-blue-200">
-              <QrCode size={110} className="text-[#003366] mb-3" />
-              <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">بوابة شكاوى المواطنين الرقمية</p>
-           </div>
-           <h2 className="text-5xl md:text-7xl font-black text-[#003366] italic underline decoration-yellow-500 decoration-[12px] underline-offset-[20px] tracking-tighter">معاً نبني مدينة أفضل</h2>
-        </div>
+          <button type="submit" disabled={loading} className="w-full bg-[#003366] hover:bg-blue-900 text-white py-8 rounded-full text-3xl font-black shadow-2xl transition-all transform hover:scale-[1.02] active:scale-95 disabled:bg-gray-400 flex items-center justify-center gap-6">
+            {loading ? (
+              <>جاري معالجة البيانات والصور...</>
+            ) : (
+              <><Send size={32} className="-rotate-45" /> إرسال الطلب الآن</>
+            )}
+          </button>
+        </form>
       </main>
 
-      <footer className="py-10 border-t border-gray-200 text-center text-gray-400 text-xs font-bold bg-white">
-        © 2026   م| عبدالرحمن المرشف على منظومة مجلس مدينة كفر شكر - منظومة التحول الرقمي بجمهورية مصر العربية
+      <footer className="text-center py-10 text-gray-400 font-bold text-sm">
+        © 2026 م| عبدالرحمن المرشف - منظومة التحول الرقمي بمصر
       </footer>
     </div>
   );
