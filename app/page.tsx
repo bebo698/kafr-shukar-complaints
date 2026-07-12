@@ -89,7 +89,7 @@ export default function ComplaintForm() {
         <div className="max-w-6xl mx-auto flex flex-row justify-between items-center relative z-10">
           <div className="flex flex-col items-center gap-2">
             <img src="/images.png" alt="شعار المحافظة" className="w-20 h-20 md:w-28 md:h-28 object-contain drop-shadow-xl" />
-            <span className="text-white text-[10px] md:text-sm font-bold">محافظة القليوبية</span>
+            <span className="text-white text-[10px] md:text-sm font-bold">مركز كفرشكر</span>
           </div>
           <div className="text-center flex-1 px-4">
             <h1 className="text-[#d4af37] text-2xl md:text-5xl font-black mb-2 tracking-tight">رئاسة مركز ومدينة كفر شكر</h1>
@@ -97,7 +97,7 @@ export default function ComplaintForm() {
           </div>
           <div className="flex flex-col items-center gap-2 text-center">
             <img src="/11.png" alt="شعار المركز" className="w-20 h-20 md:w-28 md:h-28 object-contain drop-shadow-xl" />
-            <span className="text-white text-[10px] md:text-sm font-bold">مجلس مدينة كفر شكر</span>
+            <span className="text-white text-[10px] md:text-sm font-bold"> محافظة القليوبية</span>
           </div>
         </div>
       </header>
@@ -181,7 +181,7 @@ export default function ComplaintForm() {
       </main>
 
       <footer className="text-center py-10 text-[#003366] font-black text-sm">
-        © 2026 م| عبدالرحمن المرشف - إدارة التحول الرقمي بمجلس مدينة كفر شكر
+        © 2026  - إدارة التحول الرقمي بمجلس مدينة كفر شكر
       </footer>
     </div>
   );
