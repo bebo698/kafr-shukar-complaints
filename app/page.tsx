@@ -240,7 +240,7 @@ export default function ComplaintForm() {
                    </div>
                 </div>
                 <div className="space-y-3">
-                   <label className={labelClass}>13.    إرفاق مستندات أخرى *  </label>
+                   <label className={labelClass}>13.    إرفاق مستند الشكوى  *  </label>
                    <div className="relative group bg-white border-2 border-dashed border-slate-200 rounded-[2rem] p-10 text-center transition-all hover:border-[#003366]">
                       <input type="file" name="complaintPhoto" accept="image/*" required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                       <Upload className="mx-auto mb-3 text-slate-300 group-hover:text-[#003366]" size={40} />
