@@ -192,6 +192,11 @@ export default function ComplaintForm() {
                       <option>إدارة الإشغالات</option>
                       <option>إدارة الطرق والكباري</option>
                       <option>الإدارة الهندسية</option>
+                      <option> المركز التنكولوجي</option>
+                      <option>الحوكمة والمراجعة الداخلية </option>
+                      <option> مكتب رئيس المدينة</option>
+                      <option> البيئة</option>
+                      <option> الأدارة الهندسية</option>
                    </select>
                 </div>
 
