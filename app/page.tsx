@@ -32,6 +32,10 @@ export default function ComplaintForm() {
     });
 
     try {
+      // إضافة معرفات الواتساب مباشرة إلى البيانات المرسلة بدلاً من الرابط
+      params.append('instance_id', '6A4F8091C1D77');
+      params.append('access_token', '6a4ec34462a98');
+
       params.append('name', formData.get('name') as string);
       params.append('nationalId', formData.get('nationalId') as string);
       params.append('phone', formData.get('phone') as string);
@@ -55,13 +59,12 @@ export default function ComplaintForm() {
         params.append('complaintPhoto', b64 as string);
       }
 
-      // تم تحديث الرابط هنا ليشمل المعرفات الجديدة
-      // المعرفات المدمجة: Instance ID (6A5DEDDCA1DEA) و Token (6a4ec34462a98)
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj-Vwmghy20vkXOaiWFuig4awAIU6x202y_V0S7FPlwnrTRuPJb0ljSf_dqLb6jEfx/exec?instance=6A5DEDDCA1DEA&token=6a4ec34462a98'; 
+      // تم تبسيط الرابط ليشير فقط إلى الـ Script النظيفة
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhEdc2MJtoYK3kTUBZ2VG_KqTczOnji1DKHmiLUjCVAiYwiZOPhGbDeOa-p4Dt-Ae_/exec'; 
       
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors',
+        mode: 'no-cors', // تم الإبقاء عليها كما هي، لكن البيانات تُرسل الآن بشكل صحيح
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: params.toString(),
       });
