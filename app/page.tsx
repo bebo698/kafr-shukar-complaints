@@ -62,7 +62,7 @@ export default function ComplaintForm() {
 
       // تم تبسيط الرابط ليشير فقط إلى الـ Script النظيفة
       // يرجى استبدال هذا الرابط بالرابط النهائي الجديد بعد نشر الـ Script المحدثة
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_MyjQ-sYIA9gJGtPc5_8-VmqvLDIa5wggCa6oBCec2fPvq_i8zDCBTgSBzYMxprVO/exec'; 
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwocz0u7wTRG_cWYOfeTMvAmZ9oOQbgpq6X6sLSxnBx8fF1oAIQY9eHWKZR901tNQIr/exec'; 
       
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
