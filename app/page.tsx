@@ -33,8 +33,8 @@ export default function ComplaintForm() {
 
     try {
       // إضافة معرفات الواتساب مباشرة إلى البيانات المرسلة بدلاً من الرابط
-      // المعرفات المدمجة: Instance ID (6A5DEDDCA1DEA) و Token (6a4ec34462a98)
-      params.append('instance_id', '6A5DEDDCA1DEA');
+      // هذا هو الأسلوب الصحيح
+      params.append('instance_id', '6A4F8091C1D77');
       params.append('access_token', '6a4ec34462a98');
 
       params.append('name', formData.get('name') as string);
@@ -61,7 +61,7 @@ export default function ComplaintForm() {
       }
 
       // تم تبسيط الرابط ليشير فقط إلى الـ Script النظيفة
-      // هذا هو الرابط الذي قمت أنت بتقديمه
+      // يرجى استبدال هذا الرابط بالرابط النهائي الجديد بعد نشر الـ Script المحدثة
       const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj-Vwmghy20vkXOaiWFuig4awAIU6x202y_V0S7FPlwnrTRuPJb0ljSf_dqLb6jEfx/exec'; 
       
       await fetch(GOOGLE_SCRIPT_URL, {
