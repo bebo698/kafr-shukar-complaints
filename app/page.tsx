@@ -62,7 +62,8 @@ export default function ComplaintForm() {
 
       // تم تبسيط الرابط ليشير فقط إلى الـ Script النظيفة
       // يرجى استبدال هذا الرابط بالرابط النهائي الجديد بعد نشر الـ Script المحدثة
- const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1GqDQ1bjrZBP56x0TcB8KkhUUh_Nu41z4Y8qe_Ykwqw2CVD3qSzWoV4zY9LW1rr2b/exec';      
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj-Vwmghy20vkXOaiWFuig4awAIU6x202y_V0S7FPlwnrTRuPJb0ljSf_dqLb6jEfx/exec'; 
+      
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors', // تم الإبقاء عليها كما هي، لكن البيانات تُرسل الآن بشكل صحيح
