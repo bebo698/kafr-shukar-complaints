@@ -33,7 +33,7 @@ export default function ComplaintForm() {
 
     try {
       // إضافة معرفات الواتساب مباشرة إلى البيانات المرسلة بدلاً من الرابط
-      // هذا هو الأسلوب الصحيح والأكثر أماناً
+      // هذا هو الأسلوب الصحيح
       params.append('instance_id', '6A5E5D5C22559');
       params.append('access_token', '6a4ec34462a98');
 
@@ -62,7 +62,7 @@ export default function ComplaintForm() {
 
       // تم تبسيط الرابط ليشير فقط إلى الـ Script النظيفة
       // يرجى استبدال هذا الرابط بالرابط النهائي الجديد بعد نشر الـ Script المحدثة
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwocz0u7wTRG_cWYOfeTMvAmZ9oOQbgpq6X6sLSxnBx8fF1oAIQY9eHWKZR901tNQIr/exec'; 
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj-Vwmghy20vkXOaiWFuig4awAIU6x202y_V0S7FPlwnrTRuPJb0ljSf_dqLb6jEfx/exec'; 
       
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
