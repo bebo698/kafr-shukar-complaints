@@ -67,7 +67,7 @@ export default function ComplaintForm() {
       }
 
       // 3. رابط جوجل سكريبت (تأكد من عمل New Deployment ووضع الرابط هنا)
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyxbB5hzITpe9Uh3oIlfKBZxDfVqBU1GJMr0hC36wBLPmH3wIAv01n_fj5Z5WBJBU86/exec'; 
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMY5NiTAzLg9wgdm4MSmQNEygoQOOdAs6hcLMb6BbtmmZSRKrDu5sce_OMfUN2chhk/exec'; 
 
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
