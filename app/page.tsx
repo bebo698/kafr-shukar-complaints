@@ -34,7 +34,7 @@ export default function ComplaintForm() {
     try {
       // إضافة معرفات الواتساب مباشرة إلى البيانات المرسلة بدلاً من الرابط
       // هذا هو الأسلوب الصحيح والأكثر أماناً
-      params.append('instance_id', '6A5E0F8024CC8');
+      params.append('instance_id', '6A5E5D5C22559');
       params.append('access_token', '6a4ec34462a98');
 
       params.append('name', formData.get('name') as string);
