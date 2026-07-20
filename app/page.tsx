@@ -55,7 +55,9 @@ export default function ComplaintForm() {
         params.append('complaintPhoto', b64 as string);
       }
 
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj-Vwmghy20vkXOaiWFuig4awAIU6x202y_V0S7FPlwnrTRuPJb0ljSf_dqLb6jEfx/exec'; 
+      // تم تحديث الرابط هنا ليشمل المعرفات الجديدة
+      // المعرفات المدمجة: Instance ID (6A5DEDDCA1DEA) و Token (6a4ec34462a98)
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj-Vwmghy20vkXOaiWFuig4awAIU6x202y_V0S7FPlwnrTRuPJb0ljSf_dqLb6jEfx/exec?instance=6A5DEDDCA1DEA&token=6a4ec34462a98'; 
       
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
@@ -92,17 +94,14 @@ export default function ComplaintForm() {
   return (
     <div className="min-h-screen bg-[#fdfaf1] text-right pb-20" dir="rtl">
       
-      {/* هيدر مطور - الشعارات بدون خلفية */}
       <header className="relative bg-[#003366] pt-12 pb-24 border-b-8 border-[#d4af37] shadow-xl overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         <div className="max-w-7xl mx-auto px-6 flex flex-row justify-between items-center relative z-10">
           
-          {/* شعار اليمين - شفاف */}
           <div className="flex flex-col items-center gap-3">
             <img src="/images.png" alt="القليوبية" className="w-24 h-24 md:w-36 md:h-36 object-contain drop-shadow-2xl" />
            </div>
 
-          {/* العنوان المركزي */}
           <div className="text-center flex-1">
             <h1 className="text-[#d4af37] text-4xl md:text-7xl font-black mb-2 tracking-tighter drop-shadow-sm">مجلس مدينة كفر شكر</h1>
             <p className="text-white text-xl md:text-3xl font-bold italic opacity-90">بوابة الشكاوى والمقترحات الرقمية</p>
@@ -111,7 +110,6 @@ export default function ComplaintForm() {
             </div>
           </div>
 
-          {/* شعار اليسار - شفاف */}
           <div className="flex flex-col items-center gap-3 text-center">
             <img src="/11.png" alt="المركز" className="w-24 h-24 md:w-36 md:h-36 object-contain drop-shadow-2xl" />
            </div>
@@ -120,7 +118,6 @@ export default function ComplaintForm() {
 
       <main className="max-w-6xl mx-auto px-4 -mt-12 relative z-20">
         
-        {/* صندوق الترحيب "عزيزنا المواطن" */}
         <div className="bg-white rounded-[2.5rem] shadow-2xl border-2 border-white overflow-hidden mb-16 flex flex-col md:flex-row">
            <div className="p-10 flex flex-col justify-center flex-1">
               <h2 className="text-[#003366] text-4xl font-black mb-6 italic">عزيزنا المواطن،</h2>
@@ -135,10 +132,8 @@ export default function ComplaintForm() {
            </div>
         </div>
 
-        {/* النموذج في فريم واحد مع سكشنز داخلية بأسلوب العناوين العائمة */}
         <form onSubmit={handleSubmit} className="bg-white rounded-[3rem] shadow-2xl border-2 border-white p-8 md:p-14 space-y-24">
           
-          {/* القسم الأول: بيانات المواطن */}
           <div className="relative border-2 border-slate-100 rounded-[2.5rem] p-8 md:p-12 pt-16">
              <div className="absolute -top-7 right-8 bg-[#003366] text-white px-8 py-3 rounded-2xl flex items-center gap-3 shadow-xl">
                 <User size={26} />
@@ -165,7 +160,6 @@ export default function ComplaintForm() {
              </div>
           </div>
 
-          {/* القسم الثاني: بيانات الشكوى */}
           <div className="relative border-2 border-slate-100 rounded-[2.5rem] p-8 md:p-12 pt-16">
              <div className="absolute -top-7 right-8 bg-[#003366] text-white px-8 py-3 rounded-2xl flex items-center gap-3 shadow-xl">
                 <FileText size={26} />
@@ -228,7 +222,6 @@ export default function ComplaintForm() {
              </div>
           </div>
 
-          {/* القسم الثالث: المرفقات */}
           <div className="relative border-2 border-slate-100 rounded-[2.5rem] p-8 md:p-12 pt-16 bg-slate-50/30">
              <div className="absolute -top-7 right-8 bg-[#003366] text-white px-8 py-3 rounded-2xl flex items-center gap-3 shadow-xl">
                 <Camera size={26} />
@@ -255,7 +248,6 @@ export default function ComplaintForm() {
              </div>
           </div>
 
-          {/* زر الإرسال */}
           <div className="pt-6 flex flex-col items-center">
              <button type="submit" disabled={loading} className="w-full md:w-[600px] bg-[#003366] hover:bg-blue-900 text-white py-8 rounded-full text-3xl font-black shadow-2xl transition-all transform hover:scale-[1.02] active:scale-95 disabled:bg-slate-400 flex items-center justify-center gap-6">
                 {loading ? "جاري الإرسال..." : <><Send size={36} className="-rotate-45" /> إرسال الشكوى الآن</>}
